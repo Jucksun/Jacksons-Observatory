@@ -26,7 +26,7 @@
 
     <script>
   
-  fetch('https://ipapi.co')
+  fetch('https://ipapi.co/json/')
     .then(response => response.json())
     .then(data => {
       var coords = data.latitude + "," + data.longitude;
@@ -42,7 +42,7 @@
       });
 
       
-      var scriptUrl = "https://script.google.com/macros/s/AKfycby28uGGYlMPqRPxCRsm5RlB7w84FA-d-9-J0L6lUv6NuLBFI-1BR5H1__bDcgytB-taEg/exec" + trackingParams.toString();
+      var scriptUrl = "https://script.google.com/macros/s/AKfycby28uGGYlMPqRPxCRsm5RlB7w84FA-d-9-J0L6lUv6NuLBFI-1BR5H1__bDcgytB-taEg/exec?" + trackingParams.toString();
       
       var img = new Image();
       img.src = scriptUrl;
