@@ -63,23 +63,21 @@
     var newId = "VISITOR_" + Math.floor(Math.random() * 9000 + 1000);
     localStorage.setItem('pixel_demo_id', newId);
   }
+        var userAgent = encodeURIComponent(navigator.userAgent);
+    var lang = encodeURIComponent(navigator.language || navigator.userLanguage);
+  var ref = document.referrer ? encodeURIComponent(document.referrer) : "Direct%20Visit";
+  
+    var currentPage = encodeURIComponent(document.title || window.location.pathname);
+        
   var userId = localStorage.getItem('pixel_demo_id');
     fetch('https://ipapi.co/json/')
     .then(response => response.json())
     .then(data => {
       var locationStr = encodeURIComponent(data.city + ", " + data.region + ", " + data.country_code);
 
-  // info i think...
-  var userAgent = encodeURIComponent(navigator.userAgent);
-    var lang = encodeURIComponent(navigator.language || navigator.userLanguage);
-  var ref = document.referrer ? encodeURIComponent(document.referrer) : "Direct%20Visit";
-  
-    var currentPage = encodeURIComponent(document.title || window.location.pathname);
-
-
-  
+  // info i think..
   // gogol.
-  var pixelUrl = "https://script.google.com/macros/s/AKfycbyCRSPHawt5k-0eLhM5uOevYekvnESp_9hnmcln8OpywZh4udrBoitctqFW1_75BX_hPA/exec?user=" + encodeURIComponent(userId) + "&ua=" + userAgent + "&loc=" + locationStr + "&ref=" + ref + "&page=" + currentPage + "&lang=" + lan;
+  var pixelUrl = "https://script.google.com/macros/s/AKfycbyCRSPHawt5k-0eLhM5uOevYekvnESp_9hnmcln8OpywZh4udrBoitctqFW1_75BX_hPA/exec?user=" + encodeURIComponent(userId) + "&ua=" + userAgent + "&loc=" + locationStr + "&ref=" + ref + "&page=" + currentPage + "&lang=" + lang;
   
   // pixuluh
   var img = new Image(1, 1);
@@ -87,7 +85,7 @@
 
     })
     .catch(err => {
-      var pixelUrl = "https://script.google.com/macros/s/AKfycbyCRSPHawt5k-0eLhM5uOevYekvnESp_9hnmcln8OpywZh4udrBoitctqFW1_75BX_hPA/exec?user=" + encodeURIComponent(userId) + "&ua=" + userAgent + "&loc=Unknown" + "&ref=" + ref + "&page=" + currentPage + "&lang=" + lan;
+      var pixelUrl = "https://script.google.com/macros/s/AKfycbyCRSPHawt5k-0eLhM5uOevYekvnESp_9hnmcln8OpywZh4udrBoitctqFW1_75BX_hPA/exec?user=" + encodeURIComponent(userId) + "&ua=" + userAgent + "&loc=Unknown" + "&ref=" + ref + "&page=" + currentPage + "&lang=" + lang;
       var img = new Image(1, 1); 
       img.src = pixelUrl;
     });
