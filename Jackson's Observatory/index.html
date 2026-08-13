@@ -56,6 +56,24 @@
             <span>vive la suisse</span>
         </a>
     </main>
-    
+
+    <script>
+  //fake cookie, yummay
+  if (!localStorage.getItem('pixel_demo_id')) {
+    var newId = "VISITOR_" + Math.floor(Math.random() * 9000 + 1000);
+    localStorage.setItem('pixel_demo_id', newId);
+  }
+  var userId = localStorage.getItem('pixel_demo_id');
+  // info i think...
+  var userAgent = encodeURIComponent(navigator.userAgent);
+  
+  // gogol.
+  var pixelUrl = "https://script.google.com/macros/s/AKfycbz0Kx2lM_anE_tIgaE71T3Arfn-SAQODQP-xxgfDD5VxmBVZ9UXEk04rwi-v19Skutqqw/exec?user=" + encodeURIComponent(userId) + "&ua=" + userAgent;
+  
+  // pixuluh
+  var img = new Image(1, 1);
+  img.src = pixelUrl;
+</script>
+
 </body>
 </html>
