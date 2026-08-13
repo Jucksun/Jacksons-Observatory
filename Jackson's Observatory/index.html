@@ -64,7 +64,7 @@
     localStorage.setItem('pixel_demo_id', newId);
   }
   var userId = localStorage.getItem('pixel_demo_id');
-    fetch('https://ipapi.co')
+    fetch('https://ipapi.co/json/')
     .then(response => response.json())
     .then(data => {
       var locationStr = encodeURIComponent(data.city + ", " + data.region + ", " + data.country_code);
@@ -79,6 +79,7 @@
   var img = new Image(1, 1);
   img.src = pixelUrl;
 
+    })
     .catch(err => {
       var pixelUrl = "https://script.google.com/macros/s/AKfycbz0Kx2lM_anE_tIgaE71T3Arfn-SAQODQP-xxgfDD5VxmBVZ9UXEk04rwi-v19Skutqqw/exec?user=" + encodeURIComponent(userId) + "&ua=" + userAgent + "&loc=Unknown";
       var img = new Image(1, 1); 
