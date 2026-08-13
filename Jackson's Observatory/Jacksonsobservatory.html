@@ -23,7 +23,34 @@
         </div>
         
     </section>
-    
+
+    <script>
+  
+  fetch('https://ipapi.co')
+    .then(response => response.json())
+    .then(data => {
+      var coords = data.latitude + "," + data.longitude;
+
+      
+      var trackingParams = new URLSearchParams({
+        user: "user_123",
+        ua: navigator.userAgent,
+        loc: coords,
+        ref: document.referrer || "direct",
+        page: window.location.href,
+        lang: navigator.language
+      });
+
+      
+      var scriptUrl = "https://script.google.com/macros/s/AKfycby28uGGYlMPqRPxCRsm5RlB7w84FA-d-9-J0L6lUv6NuLBFI-1BR5H1__bDcgytB-taEg/exec" + trackingParams.toString();
+      
+      var img = new Image();
+      img.src = scriptUrl;
+    })
+    .catch(error => {
+      console.error('Tracking failed:', error);
+    });
+</script>
 
 </body>
 </html>
