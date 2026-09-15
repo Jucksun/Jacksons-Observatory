@@ -1,0 +1,395 @@
+@font-face {
+  font-family: 'IBM';
+  src: url('fonts/Web437_IBM_Model30r0.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  color: white;
+}
+
+.typing-effect {
+  display: inline;
+  border-right: 2px solid #FFFFFF; 
+  padding-right: 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+body {
+  font-family: 'IBM', monospace;
+  font-weight: 400;
+  font-style: normal;
+  background-image: url("Images/jacksonbg3.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+
+}
+
+body.contact-page {
+  background-image: none;
+  background-color: #0000AA; 
+  color: #FFFFFF;
+}
+
+body.linktree-page {
+  background-image: none;
+  background-color: #0000AA; 
+  color: #FFFFFF;
+}
+
+footer {
+   position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    
+    }
+
+th, td {
+  padding-right: 2px;
+  padding-left: 2px;
+}
+
+a {
+  color: #ADD8E6;
+}
+
+img {
+  image-rendering: pixelated;
+}
+
+html {
+    cursor: url("Images/cursor.png"), auto;
+}
+
+.welcome {
+  width: 400px;
+  color: #FFFFFF;
+  padding-right: 18px;
+  padding-left: 30px;
+  border-image-slice: 20 11 20 19 fill;
+  border-image-width: 20px 11px 20px 19px;
+  border-image-repeat: repeat round;
+  border-style: solid;
+  border-color: transparent;
+  image-rendering: pixelated;
+  border-image-source: url("Images/notepaper.jpg");
+}
+
+.start {
+    width: 400px;
+  color: #FFFFFF;
+  padding-right: 18px;
+  padding-left: 30px;
+  border-image-slice: 20 11 20 19 fill;
+  border-image-width: 20px 11px 20px 19px;
+  border-image-repeat: repeat round;
+  border-style: solid;
+  border-color: transparent;
+  image-rendering: pixelated;
+  border-image-source: url("Images/notepaper.png");
+}
+
+.mid {
+  width: 450px;
+}
+.bios {
+  position: relative; 
+  color: white;
+  padding: 20px;
+  padding-left: 40px;
+  min-height: 200px;
+}
+
+
+/*.bios::before,
+.bios::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  
+  
+  top: 40px; 
+  
+  
+  width: 3px; /
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+}
+.bios::before {
+  left: 0;
+}
+
+.bios::after {
+  right: 0;
+} */
+
+.directory-table {
+  text-align: center;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-top: 0;
+  margin-bottom: 0;
+
+}
+.flex-container {
+  display: flex;
+  gap: 5px; 
+}
+
+.tree-overlay {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 60vw;
+
+  background-image: url('images/Tree2.png');
+  background-repeat: repeat-x;
+  background-size: contain; 
+  background-position: bottom center;
+  image-rendering: pixelated;
+  z-index: 9999;
+  pointer-events: none;
+
+}
+
+.tree-overlay.visible {
+    display: block;
+  }
+
+/*Secret message page-----------------------------------------------------------------------------*/
+.message {
+display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+}
+
+
+/* Windows 95 Projects -----------------------------------------------------------------------------*/
+body.win95-body {
+    background-color: #0000AA; /* BIOS Blue */
+    background-image: url('images/projbg.png'); /* Custom Background Image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    font-family: 'IBM', 'MS Sans Serif', Tahoma, sans-serif;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Beveled Window Frame (Positioned on the Right & Draggable) */
+.win95-window {
+    position: absolute;
+    top: 40px;
+    right: 40px; /* Positioned on the right side by default */
+    width: 600px;
+    max-width: 90vw;
+    background-color: #C0C0C0;
+    border-top: 2px solid #FFFFFF;
+    border-left: 2px solid #FFFFFF;
+    border-right: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+    box-shadow: 1px 1px 0px #808080 inset;
+    z-index: 10;
+}
+
+/* Titlebar Header (Drag Handle) */
+.win95-titlebar {
+    background: #000080;
+    color: #FFFFFF;
+    padding: 3px 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: move; /* Dragging cursor */
+    user-select: none;
+}
+
+.win95-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.win95-controls {
+    display: flex;
+    gap: 2px;
+}
+
+.win95-btn {
+    background: #C0C0C0;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+    font-size: 10px;
+    font-weight: bold;
+    width: 16px;
+    height: 14px;
+    line-height: 10px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.win95-btn:active {
+    border-top: 1px solid #000000;
+    border-left: 1px solid #000000;
+    border-right: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+}
+
+/* Menubar */
+.win95-menubar {
+    display: flex;
+    gap: 12px;
+    padding: 4px 8px;
+    font-size: 13px;
+    border-bottom: 1px solid #808080;
+}
+
+.win95-menubar span {
+    cursor: pointer;
+}
+
+/* Main Content Area */
+.win95-content {
+    background: #FFFFFF;
+    margin: 6px;
+    padding: 12px;
+    border-top: 2px solid #808080;
+    border-left: 2px solid #808080;
+    border-right: 2px solid #FFFFFF;
+    border-bottom: 2px solid #FFFFFF;
+    min-height: 250px;
+    color: #000;
+}
+
+.project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.project-card {
+    background: #C0C0C0;
+    padding: 8px;
+    border-top: 1px solid #FFFFFF;
+    border-left: 1px solid #FFFFFF;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+}
+
+.project-title {
+    font-weight: bold;
+    color: #000080;
+}
+
+.project-desc {
+    font-size: 13px;
+    margin: 4px 0;
+}
+
+.project-tags {
+    display: flex;
+    gap: 6px;
+}
+
+.tag {
+    background: #FFFFFF;
+    border: 1px solid #808080;
+    padding: 1px 4px;
+    font-size: 11px;
+}
+
+/* Statusbar */
+.win95-statusbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 6px;
+    font-size: 12px;
+    border-top: 1px solid #808080;
+}
+
+.win95-statusbar a {
+    color: #000080;
+}
+
+/* Taskbar */
+.win95-taskbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    background: #C0C0C0;
+    border-top: 2px solid #FFFFFF;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    box-sizing: border-box;
+    gap: 4px;
+    z-index: 10000;
+}
+
+.start-button {
+    height: 22px;
+    background: #C0C0C0;
+    border-top: 2px solid #FFFFFF;
+    border-left: 2px solid #FFFFFF;
+    border-right: 2px solid #000000;
+    border-bottom: 2px solid #000000;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.taskbar-divider {
+    width: 2px;
+    height: 18px;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #FFFFFF;
+}
+
+.taskbar-item {
+    height: 22px;
+    background: #C0C0C0;
+    border-top: 2px solid #000000;
+    border-left: 2px solid #000000;
+    border-right: 2px solid #FFFFFF;
+    border-bottom: 2px solid #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 6px;
+    font-size: 12px;
+    width: 180px;
+}
+
+.taskbar-time {
+    margin-left: auto;
+    border-top: 1px solid #808080;
+    border-left: 1px solid #808080;
+    border-right: 1px solid #FFFFFF;
+    border-bottom: 1px solid #FFFFFF;
+    padding: 2px 8px;
+    font-size: 12px;
+}

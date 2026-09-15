@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jackson's Observatory - Projects</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="win95-body">
+
+    <!-- Main Windows 95 Window (Draggable) -->
+    <div class="win95-window" id="draggableWindow">
+        <div class="win95-titlebar" id="windowHeader">
+            <div class="win95-title">
+                <img src="https://win95icons.com/png/directory_open_file_directory_cool-0.png" width="16" height="16" alt="folder">
+                C:\Projects\Directory.exe
+            </div>
+            <div class="win95-controls">
+                <button class="win95-btn">_</button>
+                <button class="win95-btn">□</button>
+                <button class="win95-btn">X</button>
+            </div>
+        </div>
+
+        <!-- Menu Bar -->
+        <div class="win95-menubar">
+            <span><u>F</u>ile</span>
+            <span><u>E</u>dit</span>
+            <span><u>V</u>iew</span>
+            <span><u>H</u>elp</span>
+        </div>
+
+        <!-- Window Content Area -->
+        <div class="win95-content">
+            <p>Select a project to view details:</p>
+            
+            <div class="project-list">
+                <!-- Project 1 -->
+                <div class="project-card">
+                    <div class="project-title">OSINT Corporate Tracker</div>
+                    <p class="project-desc">A multi-modal data aggregation tool mapping corporate activity via public regulatory APIs.</p>
+                    <div class="project-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">PyTorch</span>
+                        <span class="tag">Streamlit</span>
+                    </div>
+                </div>
+
+                <!-- Project 2 -->
+                <div class="project-card">
+                    <div class="project-title"><a href="https://github.com/Jucksun/Guestbook-CLI-and-MLP" target="_blank" style="color: #000080;">iMessage Style Classifier</a></div>
+                    <p class="project-desc">Multi-Layer Perceptron neural network analyzing texting styles with manual z-score normalization.</p>
+                    <div class="project-tags">
+                        <span class="tag">PyTorch</span>
+                        <span class="tag">NumPy</span>
+                        <span class="tag">Pandas</span>
+                    </div>
+                </div>
+
+                <!-- Project 3 -->
+                <div class="project-card">
+                    <div class="project-title">[PLACEHOLDER]</div>
+                    <p class="project-desc">*Dust blows through the air...*</p>
+                    <div class="project-tags">
+                        <span class="tag">...</span>
+                        <span class="tag">...</span>
+                        <span class="tag">...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="win95-statusbar">
+            <span>3 object(s) found</span>
+            <span class="status-right"><a href="index.html">Exit to DOS (Home)</a></span>
+        </div>
+    </div>
+
+    <!-- Taskbar -->
+    <div class="win95-taskbar">
+        <button class="start-button">
+            <img src="https://win95icons.com/png/windows-0.png" width="16" height="16" alt="win">
+            <b>Start</b>
+        </button>
+        <div class="taskbar-divider"></div>
+        <div class="taskbar-item active">
+            <img src="https://win95icons.com/png/directory_open_file_directory_cool-0.png" width="14" height="14" alt="folder">
+            C:\Projects\Directory.exe
+        </div>
+        <div class="taskbar-time" id="clock">09:54 PM</div>
+    </div>
+
+    <script>
+        // Update taskbar clock
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Drag-and-Drop functionality for the window
+        const win = document.getElementById("draggableWindow");
+        const header = document.getElementById("windowHeader");
+        let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+        header.onmousedown = dragMouseDown;
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            win.style.top = (win.offsetTop - pos2) + "px";
+            win.style.left = (win.offsetLeft - pos1) + "px";
+            win.style.right = "auto"; // Remove initial right anchoring once dragged
+        }
+
+        function closeDragElement() {
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    </script>
+</body>
+</html>
