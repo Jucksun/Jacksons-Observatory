@@ -77,7 +77,7 @@ html {
   border-style: solid;
   border-color: transparent;
   image-rendering: pixelated;
-  border-image-source: url("Images/notepaper.jpg");
+  border-image-source: url("");
 }
 
 .start {
@@ -91,7 +91,7 @@ html {
   border-style: solid;
   border-color: transparent;
   image-rendering: pixelated;
-  border-image-source: url("Images/notepaper.png");
+  border-image-source: url("");
 }
 
 .mid {
