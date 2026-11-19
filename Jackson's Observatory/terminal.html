@@ -36,6 +36,9 @@
   @media (prefers-reduced-motion: reduce) { .cursor::after { animation: none; } }
   #log a { color: var(--accent); text-decoration: underline; }
   #log a:hover { background: var(--accent); color: var(--bg); }
+  #log .fig { display: block; margin: 8px 0; border: 2px solid var(--fg); background: #000; text-decoration: none; color: var(--cyan); }
+  #log .fig img { display: block; width: 100%; height: auto; }
+  #log .fig span { display: block; padding: 2px 6px; background: var(--fg); color: var(--bg); font-size: 16px; }
 </style>
 </head>
 <body>
@@ -49,15 +52,38 @@
   </div>
   <script>
     const LINKS = {
-    resume:    { label: "Resume (PDF)",     url: "https://jacksonsobservatory.com/resume1.pdf", desc: "Jackson's resume", newTab: true },
-    osint:     { label: "OSINT Tracker",    url: "https://jacksonsobservatory.com/projects",    desc: "Projects, including the OSINT tracker" },
-    benchmark: { label: "Safety Benchmark", url: "https://github.com/Jucksun/Petrochemical-model-interpretation", desc: "LLM safety & interpretability benchmark" },
-    contact:   { label: "Contact",          url: "https://jacksonsobservatory.com/contact",     desc: "Get in touch" },
-    home:      { label: "Home",             url: "https://jacksonsobservatory.com/",            desc: "Back to the main site" },
-    linktree:  { label: "Linktree",         url: "https://jacksonsobservatory.com/linktree",    desc: "All of Jackson's links" },
-    about:     { label: "About",            url: "https://jacksonsobservatory.com/about",       desc: "About Jackson" },
-    github:    { label: "GitHub",           url: "https://github.com/Jucksun",                  desc: "Source code and repos" },
+      resume:    { label: "Resume (PDF)",     url: "https://jacksonsobservatory.com/resume1.pdf", desc: "Jackson's resume", newTab: true },
+      osint:     { label: "OSINT Tracker",    url: "https://jacksonsobservatory.com/projects",    desc: "Projects, including the OSINT tracker" },
+      benchmark: { label: "Safety Benchmark", url: "https://github.com/Jucksun/Petrochemical-model-interpretation", desc: "LLM safety & interpretability benchmark" },
+      contact:   { label: "Contact",          url: "https://jacksonsobservatory.com/contact",     desc: "Get in touch" },
+      home:      { label: "Home",             url: "https://jacksonsobservatory.com/",            desc: "Back to the main site" },
+      linktree:  { label: "Linktree",         url: "https://jacksonsobservatory.com/linktree",    desc: "All of Jackson's links" },
+      about:     { label: "About",            url: "https://jacksonsobservatory.com/about",       desc: "About Jackson" },
+      github:    { label: "GitHub",           url: "https://github.com/Jucksun",                  desc: "Source code and repos" },
+    };
+
+  const MEDIA = {
+    "benchmark-bars":     { src: "images/graphs/benchmark-bars.png",     alt: "Benchmark pass rates by model and category",           caption: "FIG 1: Behavioral benchmark" },
+    "probe-layers":       { src: "images/graphs/probe-layers.png",       alt: "Linear probe accuracy by model depth",                caption: "FIG 2: Entity familiarity probe" },
+    "refusal-logit-lens": { src: "images/graphs/refusal-logit-lens.png", alt: "Refusal direction sensitivity and logit lens",        caption: "FIG 3: Refusal vector + logit lens" },
+    "gft-covariance":     { src: "images/graphs/gft-covariance.png",     alt: "Covariance heatmaps of GFT of temperature dataset",   caption: "FIG 4: GFT covariance matrices" },
+    "error-vs-m-1":       { src: "images/graphs/error-vs-m-1.png",       alt: "Error vs nodes observed per sample",                  caption: "FIG 5: Error vs m (A)" },
+    "error-vs-m-2":       { src: "images/graphs/error-vs-m-2.png",       alt: "Error vs nodes observed per sample",                  caption: "FIG 6: Error vs m (B)" },
+    "csice-minnesota":    { src: "images/graphs/csice-minnesota.png",    alt: "CSICE channel response recovery, Minnesota road network", caption: "FIG 7: CSICE channel recovery" },
   };
+
+  function makeFigure(m) {
+    const a = document.createElement("a");
+    a.href = m.src; a.target = "_blank"; a.rel = "noopener noreferrer";
+    a.className = "fig";
+    const img = document.createElement("img");
+    img.src = m.src; img.alt = m.alt; img.loading = "lazy";
+    img.onload = () => { log.scrollTop = log.scrollHeight; };
+    const cap = document.createElement("span");
+    cap.textContent = m.caption + " (click to enlarge)";
+    a.append(img, cap);
+    return a;
+  }
 
   function makeLink(l) {
     const a = document.createElement("a");
@@ -71,15 +97,16 @@
     return a;
   }
 
-  function render(el, text) {
-    // hide a half-streamed tag like "[[lin" until it completes
+  function render(el, text, final = false) {
     text = text.replace(/\[{1,2}[^\]]*$/, "");
     el.textContent = "";
-    const re = /\[\[link:([\w-]+)\]\]/g;
+    const re = /\[\[(link|img):([\w-]+)\]\]/g;
     let last = 0, m;
     while ((m = re.exec(text))) {
       el.append(text.slice(last, m.index));
-      if (Object.hasOwn(LINKS, m[1])) el.append(makeLink(LINKS[m[1]]));
+      const [, kind, id] = m;
+      if (kind === "link" && Object.hasOwn(LINKS, id)) el.append(makeLink(LINKS[id]));
+      if (kind === "img" && final && Object.hasOwn(MEDIA, id)) el.append(makeFigure(MEDIA[id]));
       last = re.lastIndex;
     }
     el.append(text.slice(last));
@@ -142,6 +169,11 @@
         for (const l of Object.values(LINKS)) d.append(makeLink(l), " - " + l.desc + "\n");
         return;
       }
+      if (cmd === "graphs") {
+        const d = row("sys", "FIGURE INDEX:\n");
+        for (const m of Object.values(MEDIA)) d.append(makeFigure(m));
+        return;
+      }
       if (cmd === "model") {
         if (models.includes(arg)) { model = arg; mname.textContent = "MODEL: " + arg.toUpperCase(); row("sys", "Model set to " + arg + "."); }
         else row("err", "Unknown model. Options: " + models.join(", "));
@@ -182,7 +214,7 @@
             if (!line.startsWith("data:")) continue;
             const data = line.slice(5).trim();
             if (!data || data === "[DONE]") continue;
-            try { acc += tokenFrom(JSON.parse(data)); render(out, acc); log.scrollTop = log.scrollHeight; } catch {}
+            try { acc += tokenFrom(JSON.parse(data)); render(out, acc, true); log.scrollTop = log.scrollHeight; } catch {}
           }
         }
         history.push({ role: "assistant", content: acc });
