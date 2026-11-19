@@ -220,23 +220,24 @@
             if (!data || data === "[DONE]") continue;
             try {
               acc += tokenFrom(JSON.parse(data));
-              render(out, acc);                    // no "true" while streaming
+              render(out, acc); // no "true" while streaming
               log.scrollTop = log.scrollHeight;
             } catch {}
           }
         }
-        render(out, acc, true);                    // final pass: images appear now
-        log.scrollTop = log.scrollHeight;
-        history.push({ role: "assistant", content: acc });   // once, at the end
-      } catch (e) {
-        out.className = "row err";
-        out.textContent = "ERROR: " + e.message;
-        history.pop();
+        render(out, acc, true); // final pass: images appear now
+          log.scrollTop = log.scrollHeight;
+          history.push({ role: "assistant", content: acc });
+          } catch (e) {
+            out.className = "row err";
+            out.textContent = "ERROR: " + e.message;
+            history.pop();
+          } finally {
+            if (acc) render(out, acc, true);
+            busy = false;
+            input.focus();
+          }
       }
-      out.classList.remove("cursor");
-      busy = false;
-      input.focus();
-    }
     
     form.addEventListener("submit", (e) => {
       e.preventDefault();
