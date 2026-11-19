@@ -406,19 +406,14 @@ body.win95-body {
 }
 
 .top-right-card {
-  
   position: fixed; 
   top: 16px; 
   right: 16px;
-
- 
   display: inline-flex;
   flex-direction: column; 
   align-items: center;
   justify-content: center;
   gap: 4px;
-
-  
   padding: 8px 12px;
   text-decoration: none; 
   color: #FFFFFF;
