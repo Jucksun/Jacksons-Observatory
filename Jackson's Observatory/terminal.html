@@ -98,19 +98,23 @@
   }
 
   function render(el, text, final = false) {
+    // hide a half-streamed tag like "[[prob" until it completes
     text = text.replace(/\[{1,2}[^\]]*$/, "");
     el.textContent = "";
-    const re = /\[\[(link|img):([\w-]+)\]\]/g;
+    const re = /\[\[\s*(?:(link|img)\s*:\s*)?([\w-]+)\s*\]\]/gi;
     let last = 0, m;
     while ((m = re.exec(text))) {
       el.append(text.slice(last, m.index));
-      const [, kind, id] = m;
+      const id = m[2].toLowerCase();
+      let kind = m[1] ? m[1].toLowerCase() : null;
+      if (!kind) kind = Object.hasOwn(MEDIA, id) ? "img" : "link";
       if (kind === "link" && Object.hasOwn(LINKS, id)) el.append(makeLink(LINKS[id]));
       if (kind === "img" && final && Object.hasOwn(MEDIA, id)) el.append(makeFigure(MEDIA[id]));
       last = re.lastIndex;
     }
     el.append(text.slice(last));
   }
+    
     const API_URL = "https://observatory-terminal.jackson-ramsdell28.workers.dev";
 
     const log = document.getElementById("log");
