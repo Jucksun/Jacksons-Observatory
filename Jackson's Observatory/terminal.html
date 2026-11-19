@@ -34,123 +34,189 @@
   .cursor::after { content: "\2588"; animation: blink 1s steps(2) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
   @media (prefers-reduced-motion: reduce) { .cursor::after { animation: none; } }
+  #log a { color: var(--accent); text-decoration: underline; }
+  #log a:hover { background: var(--accent); color: var(--bg); }
 </style>
 </head>
 <body>
-<div id="win">
-  <div id="title"><span>JACKSONOS V2.1 - AI TERMINAL</span><span id="mname">MODEL: LLAMA</span></div>
-  <div id="log" aria-live="polite"></div>
-  <form id="form" autocomplete="off">
-    <span id="prompt">C:\OBSERVATORY&gt;</span>
-    <input id="in" aria-label="Message" autofocus maxlength="1000" spellcheck="false">
-  </form>
-</div>
-<script>
-  // After you deploy the Worker, paste its URL here.
-  const API_URL = "https://observatory-terminal.jackson-ramsdell28.workers.dev";
+  <div id="win">
+    <div id="title"><span>JACKSONOS V2.1 - AI TERMINAL</span><span id="mname">MODEL: LLAMA</span></div>
+    <div id="log" aria-live="polite"></div>
+    <form id="form" autocomplete="off">
+      <span id="prompt">C:\OBSERVATORY&gt;</span>
+      <input id="in" aria-label="Message" autofocus maxlength="1000" spellcheck="false">
+    </form>
+  </div>
+  <script>
+    const LINKS = {
+    resume:    { label: "Resume (PDF)",     url: "https://jacksonsobservatory.com/resume1.pdf", desc: "Jackson's resume", newTab: true },
+    osint:     { label: "OSINT Tracker",    url: "https://jacksonsobservatory.com/projects",    desc: "Projects, including the OSINT tracker" },
+    benchmark: { label: "Safety Benchmark", url: "https://github.com/Jucksun/Petrochemical-model-interpretation", desc: "LLM safety & interpretability benchmark" },
+    contact:   { label: "Contact",          url: "https://jacksonsobservatory.com/contact",     desc: "Get in touch" },
+    home:      { label: "Home",             url: "https://jacksonsobservatory.com/",            desc: "Back to the main site" },
+    linktree:  { label: "Linktree",         url: "https://jacksonsobservatory.com/linktree",    desc: "All of Jackson's links" },
+    about:     { label: "About",            url: "https://jacksonsobservatory.com/about",       desc: "About Jackson" },
+    github:    { label: "GitHub",           url: "https://github.com/Jucksun",                  desc: "Source code and repos" },
+  };
 
-  const log = document.getElementById("log");
-  const input = document.getElementById("in");
-  const form = document.getElementById("form");
-  const mname = document.getElementById("mname");
-  const models = ["llama", "mistral", "gemma"];
-  let model = "llama";
-  let history = [];
-  let busy = false;
-
-  function row(cls, text) {
-    const d = document.createElement("div");
-    d.className = "row " + cls;
-    d.textContent = text;
-    log.appendChild(d);
-    log.scrollTop = log.scrollHeight;
-    return d;
-  }
-
-  row("sys", "JacksonOS v2.1 AI terminal ready.\nType a question, or /help for commands.");
-
-  function command(line) {
-    const [cmd, arg] = line.slice(1).split(/\s+/);
-    if (cmd === "return" || cmd === "r") {
-      row("sys", "Exiting JacksonOS Terminal -> index.html...");
-      window.location.href = "index.html";
-      return;
+  function makeLink(l) {
+    const a = document.createElement("a");
+    a.href = l.url;
+    a.textContent = "[" + l.label + "]";
+    const external = new URL(l.url, location.href).origin !== location.origin;
+    if (l.newTab || external) {
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
     }
-    if (cmd === "clear") { history = []; log.textContent = ""; return; }
-    if (cmd === "model") {
-      if (models.includes(arg)) { model = arg; mname.textContent = "MODEL: " + arg.toUpperCase(); row("sys", "Model set to " + arg + "."); }
-      else row("err", "Unknown model. Options: " + models.join(", "));
-      return;
+    return a;
+  }
+
+  function render(el, text) {
+    // hide a half-streamed tag like "[[lin" until it completes
+    text = text.replace(/\[{1,2}[^\]]*$/, "");
+    el.textContent = "";
+    const re = /\[\[link:([\w-]+)\]\]/g;
+    let last = 0, m;
+    while ((m = re.exec(text))) {
+      el.append(text.slice(last, m.index));
+      if (Object.hasOwn(LINKS, m[1])) el.append(makeLink(LINKS[m[1]]));
+      last = re.lastIndex;
     }
-    row("sys", "/model <llama|mistral|gemma>  switch model\n/clear                        reset chat\n/return (or /r)               back to index.html");
+    el.append(text.slice(last));
   }
+    const API_URL = "https://observatory-terminal.jackson-ramsdell28.workers.dev";
 
-  function tokenFrom(p) {
-    if (typeof p.response === "string") return p.response;
-    const c = p.choices && p.choices[0];
-    return (c && c.delta && c.delta.content) || "";
-  }
+    const log = document.getElementById("log");
+    const input = document.getElementById("in");
+    const form = document.getElementById("form");
+    const mname = document.getElementById("mname");
+    const models = ["llama", "mistral", "gemma"];
+    
+    let model = "llama";
+    let history = [];
+    let busy = false;
 
-  async function send(text) {
-    busy = true;
-    row("you", "> " + text);
-    history.push({ role: "user", content: text });
-    const out = row("cursor", "");
-    let acc = "";
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ model, messages: history }),
-      });
-      if (!res.ok || !res.body) throw new Error((await res.text()) || res.status);
-      const reader = res.body.getReader();
-      const dec = new TextDecoder();
-      let buf = "";
-      for (;;) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        buf += dec.decode(value, { stream: true });
-        const lines = buf.split("\n");
-        buf = lines.pop();
-        for (const line of lines) {
-          if (!line.startsWith("data:")) continue;
-          const data = line.slice(5).trim();
-          if (!data || data === "[DONE]") continue;
-          try { acc += tokenFrom(JSON.parse(data)); out.textContent = acc; log.scrollTop = log.scrollHeight; } catch {}
-        }
+  function render(el, text) {
+    // hide a half-streamed tag like "[[lin" until it completes, thanks google
+    text = text.replace(/\[{1,2}[^\]]*$/, "");
+    el.textContent = "";
+    const re = /\[\[link:([\w-]+)\]\]/g;
+    let last = 0, m;
+    while ((m = re.exec(text))) {
+      el.append(text.slice(last, m.index));
+      if (Object.hasOwn(LINKS, m[1])) {
+        const l = LINKS[m[1]];
+        const a = document.createElement("a");
+        a.href = l.url;
+        a.textContent = "[" + l.label + "]";
+        if (/^https?:/.test(l.url)) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+        el.append(a);
       }
-      history.push({ role: "assistant", content: acc });
-    } catch (e) {
-      out.className = "row err";
-      out.textContent = "ERROR: " + e.message;
-      history.pop();
+      last = re.lastIndex;
     }
-    out.classList.remove("cursor");
-    busy = false;
-    input.focus();
+    el.append(text.slice(last));
   }
+    
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const text = input.value.trim();
-    if (!text || busy) return;
-    input.value = "";
-    text.startsWith("/") ? command(text) : send(text);
-  });
-</script>
+    function row(cls, text) {
+      const d = document.createElement("div");
+      d.className = "row " + cls;
+      d.textContent = text;
+      log.appendChild(d);
+      log.scrollTop = log.scrollHeight;
+      return d;
+    }
 
-<p><a style="color: #FFFFFF;" href="index.html">Home Page</a></p>
+    row("sys", "JacksonOS v2.1 AI terminal ready.\nType a question, or /help for commands.");
 
-<div class="win95-taskbar">
-    <button class="start-button">
-        <img src="https://win95icons.com/png/windows-0.png" width="16" height="16" alt="win">
-        <b>Return</b>
-    </button>
-    <div class="taskbar-divider"></div>
-    <div class="taskbar-item active">
-        <img src="https://win95icons.com/png/directory_open_file_directory_cool-0.png" width="14" height="14" alt="folder">
-        C:\Directory.exe
- </div>
+    function command(line) {
+      const [cmd, arg] = line.slice(1).split(/\s+/);
+      if (cmd === "return" || cmd === "r") {
+        row("sys", "Exiting JacksonOS Terminal -> index.html...");
+        window.location.href = "index.html";
+        return;
+      }
+      if (cmd === "clear") { history = []; log.textContent = ""; return; }
+      if (cmd === "links") {
+        const d = row("sys", "DIRECTORY LISTING:\n");
+        for (const l of Object.values(LINKS)) d.append(makeLink(l), " - " + l.desc + "\n");
+        return;
+      }
+      if (cmd === "model") {
+        if (models.includes(arg)) { model = arg; mname.textContent = "MODEL: " + arg.toUpperCase(); row("sys", "Model set to " + arg + "."); }
+        else row("err", "Unknown model. Options: " + models.join(", "));
+        return;
+      }
+      row("sys", "/model <llama|mistral|gemma>  switch model\n/links                        list all pages\n/clear                        reset chat\n/return (or /r)               back to index.html");
+    }
+
+    function tokenFrom(p) {
+      if (typeof p.response === "string") return p.response;
+      const c = p.choices && p.choices[0];
+      return (c && c.delta && c.delta.content) || "";
+    }
+
+    async function send(text) {
+      busy = true;
+      row("you", "> " + text);
+      history.push({ role: "user", content: text });
+      const out = row("cursor", "");
+      let acc = "";
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ model, messages: history }),
+        });
+        if (!res.ok || !res.body) throw new Error((await res.text()) || res.status);
+        const reader = res.body.getReader();
+        const dec = new TextDecoder();
+        let buf = "";
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          const lines = buf.split("\n");
+          buf = lines.pop();
+          for (const line of lines) {
+            if (!line.startsWith("data:")) continue;
+            const data = line.slice(5).trim();
+            if (!data || data === "[DONE]") continue;
+            try { acc += tokenFrom(JSON.parse(data)); render(out, acc); log.scrollTop = log.scrollHeight; } catch {}
+          }
+        }
+        history.push({ role: "assistant", content: acc });
+      } catch (e) {
+        out.className = "row err";
+        out.textContent = "ERROR: " + e.message;
+        history.pop();
+      }
+      out.classList.remove("cursor");
+      busy = false;
+      input.focus();
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text || busy) return;
+      input.value = "";
+      text.startsWith("/") ? command(text) : send(text);
+    });
+  </script>
+
+  <p><a style="color: #FFFFFF;" href="index.html">Home Page</a></p>
+
+  <div class="win95-taskbar">
+      <button class="start-button">
+          <img src="https://win95icons.com/png/windows-0.png" width="16" height="16" alt="win">
+          <b>Return</b>
+      </button>
+      <div class="taskbar-divider"></div>
+      <div class="taskbar-item active">
+          <img src="https://win95icons.com/png/directory_open_file_directory_cool-0.png" width="14" height="14" alt="folder">
+          C:\Directory.exe
+      </div>
+  </div>
 </body>
 </html>
