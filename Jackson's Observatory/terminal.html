@@ -126,27 +126,6 @@
     let model = "llama";
     let history = [];
     let busy = false;
-
-  function render(el, text) {
-    // hide a half-streamed tag like "[[lin" until it completes, thanks google
-    text = text.replace(/\[{1,2}[^\]]*$/, "");
-    el.textContent = "";
-    const re = /\[\[link:([\w-]+)\]\]/g;
-    let last = 0, m;
-    while ((m = re.exec(text))) {
-      el.append(text.slice(last, m.index));
-      if (Object.hasOwn(LINKS, m[1])) {
-        const l = LINKS[m[1]];
-        const a = document.createElement("a");
-        a.href = l.url;
-        a.textContent = "[" + l.label + "]";
-        if (/^https?:/.test(l.url)) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
-        el.append(a);
-      }
-      last = re.lastIndex;
-    }
-    el.append(text.slice(last));
-  }
     
 
     function row(cls, text) {
