@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jackson's Observatory</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class = "linktree-page">
+    <header>
+    </header>
+    <main>
+      <section class="flex-container">
+        <div class="start bios">
+          <p class="typing-effect" style = "--char-count: 50;">Welcome to Jackson's Observatory cookies browser!</p>
+          <p>
+            Here you can find links to all of my other pages and resources. Feel free to explore!
+          </p>
+          <p>  
+
+          </p>
+          <p> 
+            Data like this is typically used for telemetry and analytics, however, none of the data you see here is recorded. 
+            <br>
+            <br>
+            Anyways, here's a couple links from articles I've been reading recently that I found interesting:
+            <br>
+             - <a href="https://themarkup.org/pixel-hunt/2026/09/14/how-tiktok-and-google-ended-up-with-information-about-doctors-appointments-around-the-world">How TikTok and Google Ended Up With Information About Doctors’ Appointments Around the World, The Markup, 14 Sept. 2026</a>
+            <br>
+             - <a href="https://www.microsoft.com/en-us/edge/learning-center/what-are-cookies?form=MA13I2">What Are Cookies?, Microsoft Edge Learning Center, 2023 </a>
+        </p>
+          <a style="color: #FFFFFF;" href="index.html">Home Page</a>
+        </div>
+        <div id="user-info" class="bios">
+                <p>Telemetry Feed:</p>
+                <p>Coordinates: <span id="display-coords">Loading...</span></p>
+                <p>Browser/OS: <span id="display-ua">Loading...</span></p>
+                <p>Language: <span id="display-lang">Loading...</span></p>
+                <hr style="border: 0; border-top: 1px dashed #ccc;">
+                <p>CPU Cores: <span id="display-cores">Loading...</span></p>
+                <p>Device RAM: <span id="display-ram">Loading...</span></p>
+                <p>Screen Bounds: <span id="display-screen">Loading...</span></p>
+                <p>Script Render Time: <span id="display-speed">Loading...</span></p>
+        </div>
+      </section>
+    </main>
+
+    
+  </body>
+  <script>
+  
+  var totalCores = navigator.hardwareConcurrency || "Unknown";
+  var totalRam = navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Unknown";
+  var screenResolution = screen.width + " x " + screen.height;
+  
+  
+  var loadTime = Math.round(performance.now()) + " ms";
+
+  document.getElementById("display-ua").textContent = navigator.userAgent;
+  document.getElementById("display-lang").textContent = navigator.language;
+  document.getElementById("display-cores").textContent = totalCores;
+  document.getElementById("display-ram").textContent = totalRam;
+  document.getElementById("display-screen").textContent = screenResolution;
+  document.getElementById("display-speed").textContent = loadTime;
+
+ 
+  fetch('https://ip-api.com')
+    .then(response => {
+      if (!response.ok) throw new Error('Network issue');
+      return response.json();
+    })
+    .then(data => {
+      if(data.status === "success") {
+        document.getElementById("display-coords").textContent = data.lat + ", " + data.lon;
+      } else {
+        document.getElementById("display-coords").textContent = "Unavailable";
+      }
+    })
+    .catch(error => {
+      console.error('Network telemetry error:', error);
+      document.getElementById("display-coords").textContent = "Unavailable";
+    });
+</script>
+
+
+</html>
