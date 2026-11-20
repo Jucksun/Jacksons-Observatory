@@ -38,8 +38,8 @@
   #log .fig { display: block; margin: 8px 0; border: 2px solid var(--fg); background: #000; text-decoration: none; color: var(--cyan); }
   #log .fig img { display: block; width: 100%; height: auto; }
   #log .fig span { display: block; padding: 2px 6px; background: var(--fg); color: var(--bg); font-size: 16px; }
-  .box { border: 2px solid var(--fg); background: #000; color: var(--cyan); padding: 6px 8px; margin: 8px 0; overflow-x: auto; }
-  .box b { color: var(--accent); }
+  .box { border: 2px solid var(--fg); background: #fff; color: var(--cyan); padding: 6px 8px; margin: 8px 0; overflow-x: auto; }
+  .box b { color: var(--bg); }
   code { background: #000; color: var(--cyan); padding: 0 3px; }
   .chips { margin-top: 6px; }
   .chip, .copy { background: none; border: 0; color: var(--accent); font: inherit; cursor: pointer; padding: 0 6px 0 0; text-align: left; text-decoration: underline; }
@@ -108,7 +108,7 @@
         });
         t += "\n";
       }
-      return mk("div", "box", t + (c.note || ""));
+      return mk("div", "box chart", t + (c.note || ""));
     }
 
     function makeCard(c) {
